@@ -1,0 +1,1 @@
+import{t as e}from"./client.kiYKGtcZ.js";import{t}from"./jsx-runtime.BPMVGbCv.js";var n=t();function r({slugs:t,exclude:r}){return(0,n.jsx)(`button`,{type:`button`,className:`btn btn-primary btn-lg`,onClick:()=>{let n=t.filter(e=>e!==r),i=n.length?n:t,a=i[Math.floor(Math.random()*i.length)];a&&e(`/recipes/${a}/`)},children:`Удиви меня`})}export{r as default};

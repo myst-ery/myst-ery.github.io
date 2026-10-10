@@ -1,0 +1,227 @@
+# Admin panel settings (Sveltia CMS, served from the site at /admin/).
+# Fields mirror .pages.yml – change both together.
+
+backend:
+  name: github
+  repo: myst-ery/kukhnya-mariny
+  branch: main
+  # No OAuth server: the owner signs in with an access token.
+  commit_messages:
+    create: "Add {{collection}} {{slug}}"
+    update: "Update {{collection}} {{slug}}"
+    delete: "Delete {{collection}} {{slug}}"
+    uploadMedia: "Upload {{path}}"
+    deleteMedia: "Delete {{path}}"
+
+app_title: Кухня Марины
+site_url: https://myst-ery.github.io
+display_url: https://myst-ery.github.io
+logo:
+  src: /favicon.svg
+
+media_folder: public/images
+public_folder: /images
+
+collections:
+  - name: recipes
+    label: Рецепты
+    label_singular: Рецепт
+    folder: src/content/recipes
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    slug: "{{title}}"
+    identifier_field: title
+    summary: "{{title}}"
+    sortable_fields: [title, date, category]
+    view_filters:
+      - label: Черновики
+        field: draft
+        pattern: true
+    fields:
+      - name: title
+        label: Название
+        widget: string
+        maxlength: 90
+      - name: category
+        label: Раздел
+        widget: select
+        options: [Закуски, Салаты, Горячее, Выпечка, Десерты]
+      - name: description
+        label: Коротко о блюде
+        hint: Одно-два предложения. Показываются в карточке и в начале рецепта.
+        widget: text
+        maxlength: 300
+      - name: photo
+        label: Фото блюда
+        hint: Можно оставить пустым – тогда будет красивая заставка с буквой.
+        widget: image
+        required: false
+      - name: minutes
+        label: Время приготовления, минут
+        hint: Только число. Если не знаете – оставьте пустым.
+        widget: number
+        value_type: int
+        min: 1
+        required: false
+      - name: servings
+        label: Сколько порций
+        hint: Только число. Если указать, гости смогут пересчитать продукты на другое число порций.
+        widget: number
+        value_type: int
+        min: 1
+        required: false
+      - name: ingredients
+        label: Продукты
+        label_singular: продукт
+        hint: Добавляйте по одному продукту. «Подзаголовок» – например, «Для соуса».
+        widget: list
+        typeKey: type
+        types:
+          - name: item
+            label: Продукт
+            widget: object
+            summary: "{{name}} – {{amount}}"
+            fields:
+              - name: name
+                label: Продукт
+                widget: string
+              - name: amount
+                label: Сколько
+                hint: Например, «2 шт.», «½ стакана», «по вкусу».
+                widget: string
+                required: false
+          - name: group
+            label: Подзаголовок
+            widget: object
+            summary: "{{group}}"
+            fields:
+              - name: group
+                label: Текст подзаголовка
+                widget: string
+      - name: steps
+        label: Как готовить
+        label_singular: шаг
+        hint: Один шаг – одно действие. Если в шаге есть время («20 минут»), у шага появится таймер.
+        widget: list
+        summary: "{{text}}"
+        required: false
+        fields:
+          - name: text
+            label: Что сделать
+            widget: text
+          - name: photo
+            label: Фото к шагу (не обязательно)
+            widget: image
+            required: false
+      - name: tip
+        label: Совет
+        widget: text
+        required: false
+      - name: note
+        label: Моя заметка
+        hint: Покажется цитатой с подписью «Марина».
+        widget: text
+        required: false
+      - name: story
+        label: История блюда
+        hint: Откуда рецепт, с чем связан. Гости откроют её по кнопке.
+        widget: text
+        required: false
+      - name: fromNotebook
+        label: Из моей тетради
+        hint: Включите, если рецепт из вашей рукописной тетради.
+        widget: boolean
+        default: false
+      - name: seasons
+        label: Сезон
+        hint: В какое время года рецепт показывать как «Рецепт сезона» на главной.
+        widget: select
+        multiple: true
+        required: false
+        options:
+          - { label: Зима, value: зима }
+          - { label: Весна, value: весна }
+          - { label: Лето, value: лето }
+          - { label: Осень, value: осень }
+      - name: country
+        label: Страна (подпись)
+        hint: Не обязательно.
+        widget: string
+        required: false
+      - name: date
+        label: Дата добавления
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        default: "{{now}}"
+      - name: draft
+        label: Черновик (не показывать на сайте)
+        widget: boolean
+        default: false
+
+  - name: settings
+    label: Настройки сайта
+    files:
+      - name: site
+        label: Настройки сайта
+        file: src/data/site.json
+        format: json
+        fields:
+          - name: name
+            label: Название сайта
+            widget: string
+          - name: hostess
+            label: Ваше имя (подпись)
+            widget: string
+          - name: tagline
+            label: Подзаголовок на главной
+            widget: string
+            required: false
+          - name: greeting
+            label: Приветствие на главной
+            widget: text
+            required: false
+          - name: quote
+            label: Цитата на главной
+            widget: text
+            required: false
+          - name: heroPhoto
+            label: Большое фото на главной
+            hint: Лучше горизонтальное, со свободным местом справа – там будет приветствие.
+            widget: image
+            required: false
+          - name: heroAlt
+            label: Что на большом фото (для незрячих гостей)
+            widget: string
+            required: false
+          - name: about
+            label: Текст «Обо мне»
+            hint: Абзацы разделяйте пустой строкой.
+            widget: text
+            required: false
+          - name: subscribe
+            label: Подписка на канал
+            widget: object
+            fields:
+              - name: enabled
+                label: Показывать блок подписки
+                widget: boolean
+                default: false
+              - name: telegram
+                label: Ссылка на Telegram
+                widget: string
+                required: false
+              - name: max
+                label: Ссылка на MAX
+                widget: string
+                required: false
+              - name: vk
+                label: Ссылка на ВКонтакте
+                widget: string
+                required: false
+              - name: ok
+                label: Ссылка на Одноклассники
+                widget: string
+                required: false
